@@ -29,7 +29,7 @@ def run_game():
         fns.check_events(wof_settings,screen,hero,bombs)
         
         hero.update()
-        
+        fns.update_diamonds(hero,diamonds)
         fns.update_bombs(wof_settings,bombs)
         fns.update_screen(wof_settings, screen, hero, diamonds,bombs)
 

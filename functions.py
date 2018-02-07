@@ -79,6 +79,7 @@ def update_bombs(wof_settings,bombs):
         if bomb.counter == wof_settings.bomb_timer:
             bomb.counter = 0
             bombs.remove(bomb)
+            
 def put_diamond(wof_settings,screen,diamonds):
     # Create a diamond and place it to the random position
     # Spacing between a diamond and the edges is equal to two diamond widths or heights
@@ -104,3 +105,9 @@ def create_diamonds(wof_settings,screen,diamonds):
     
     for diamond_number in range(0,randint(wof_settings.min_diamonds,wof_settings.max_diamonds)):
         put_diamond(wof_settings,screen,diamonds)
+
+def update_diamonds(hero,diamonds):
+    # Check for hero has hit any bullets
+    # If so, get rid of the diamond
+    
+    collisions = pygame.sprite.spritecollide(hero, diamonds, True)

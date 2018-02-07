@@ -19,7 +19,7 @@ class GameSettings(object):
         self.bg_color = (230,230,230)
         
         # Hero settings
-        self.hero_speed_factor = 1
+        self.hero_speed_factor = 0.75
         
         # Diamonds settings
         self.min_diamonds = 5
