@@ -28,7 +28,7 @@ class Diamond(Sprite):
         
         self.x = float(self.rect.x)
         self.y = float(self.rect.y)
-
+        
     def blit_diamon(self):
         """Draw the diamond to the screen."""
         self.screen.blit(self.image,self.rect)

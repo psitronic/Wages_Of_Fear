@@ -69,7 +69,7 @@ def put_bomb(wof_settings,screen,hero,bombs):
         new_bomb = Bomb(wof_settings, screen, hero)
         bombs.add(new_bomb)
         
-def update_bombs(wof_settings,bombs):
+def update_bombs(wof_settings,bombs,sound_bomb):
     """
     Update animations of bombs and get rid of old bombs
     """
@@ -77,8 +77,10 @@ def update_bombs(wof_settings,bombs):
     # Get rid of bombs that have exploded
     for bomb in bombs.copy():
         if bomb.counter == wof_settings.bomb_timer:
+            sound_bomb.play()
             bomb.counter = 0
             bombs.remove(bomb)
+            
             
 def put_diamond(wof_settings,screen,diamonds):
     # Create a diamond and place it to the random position
@@ -106,8 +108,12 @@ def create_diamonds(wof_settings,screen,diamonds):
     for diamond_number in range(0,randint(wof_settings.min_diamonds,wof_settings.max_diamonds)):
         put_diamond(wof_settings,screen,diamonds)
 
-def update_diamonds(hero,diamonds):
+def update_diamonds(hero,diamonds,sound_diamond):
     # Check for hero has hit any bullets
     # If so, get rid of the diamond
     
-    collisions = pygame.sprite.spritecollide(hero, diamonds, True)
+    collision = pygame.sprite.spritecollide(hero, diamonds, True)
+    
+    if collision:
+         # Sound to play when the diamond picked up
+         sound_diamond.play()

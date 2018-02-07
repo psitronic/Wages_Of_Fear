@@ -16,6 +16,9 @@ def run_game():
     wof_settings = GameSettings()
     screen = pygame.display.set_mode((wof_settings.width, wof_settings.height))
     pygame.display.set_caption("The Wages of Fear")
+    sound_diamond = pygame.mixer.Sound('sounds/crystal.wav')
+    sound_bomb = pygame.mixer.Sound('sounds/explosion.wav')
+
     
     hero = Hero(wof_settings,screen) # create the hero
     bombs = Group() # Make a group to store bombs in
@@ -29,8 +32,8 @@ def run_game():
         fns.check_events(wof_settings,screen,hero,bombs)
         
         hero.update()
-        fns.update_diamonds(hero,diamonds)
-        fns.update_bombs(wof_settings,bombs)
+        fns.update_diamonds(hero,diamonds,sound_diamond)
+        fns.update_bombs(wof_settings,bombs,sound_bomb)
         fns.update_screen(wof_settings, screen, hero, diamonds,bombs)
 
 if __name__ == '__main__':
