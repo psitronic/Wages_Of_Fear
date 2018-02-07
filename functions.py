@@ -7,6 +7,8 @@
 import sys
 import pygame
 from bomb import Bomb
+from diamond import Diamond
+from random import randint, randrange
 
 def check_keydown_events(event, wof_settings, screen, hero, bombs):
     """Respond to key presses"""
@@ -49,13 +51,15 @@ def check_events(wof_settings, screen, hero, bombs):
         elif event.type == pygame.KEYUP:
             check_keyup_events(event, hero)
 
-def update_screen(wof_settings,screen,hero,bombs):
+def update_screen(wof_settings,screen,hero,diamonds,bombs):
     """
     Update images on the screen and flip to the new screen
     """
     screen.fill(wof_settings.bg_color)
     for bomb in bombs.sprites():
         bomb.draw_bomb()
+        
+    diamonds.draw(screen)
     hero.blitme()
     pygame.display.flip()
 
@@ -75,3 +79,28 @@ def update_bombs(wof_settings,bombs):
         if bomb.counter == wof_settings.bomb_timer:
             bomb.counter = 0
             bombs.remove(bomb)
+def put_diamond(wof_settings,screen,diamonds):
+    # Create a diamond and place it to the random position
+    # Spacing between a diamond and the edges is equal to two diamond widths or heights
+
+    diamond = Diamond(wof_settings, screen)
+    diamond_width = diamond.rect.width
+    diamond_height = diamond.rect.height
+
+    diamond.x = randrange(2*diamond_width, wof_settings.width - 2*diamond_width)
+    diamond.y = randrange(2*diamond_height, wof_settings.height - 2*diamond_height)
+    diamond.rect.x = diamond.x
+    diamond.rect.y = diamond.y
+
+    if pygame.sprite.spritecollideany(diamond, diamonds) == None:
+        diamonds.add(diamond)
+    else:
+        diamond.kill()
+
+def create_diamonds(wof_settings,screen,diamonds):
+    """
+    Create a random set of diamonds
+    """
+    
+    for diamond_number in range(0,randint(wof_settings.min_diamonds,wof_settings.max_diamonds)):
+        put_diamond(wof_settings,screen,diamonds)

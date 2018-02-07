@@ -19,7 +19,11 @@ class GameSettings(object):
         self.bg_color = (230,230,230)
         
         # Hero settings
-        self.hero_speed_factor = 0.5
+        self.hero_speed_factor = 1
+        
+        # Diamonds settings
+        self.min_diamonds = 5
+        self.max_diamonds = 10
         
         # Bomb settings
         self.bomb_timer = 1000 # wait before the bomb explodes

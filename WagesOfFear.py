@@ -18,7 +18,11 @@ def run_game():
     pygame.display.set_caption("The Wages of Fear")
     
     hero = Hero(wof_settings,screen) # create the hero
-    bombs = Group() # Make a group to store bombs in.
+    bombs = Group() # Make a group to store bombs in
+    diamonds = Group() # Make a group to store all diamonds in
+    
+    # Create the diamonds
+    fns.create_diamonds(wof_settings,screen,diamonds)
 
     while wof_settings.running:
         # check if keys pressed or released
@@ -27,7 +31,7 @@ def run_game():
         hero.update()
         
         fns.update_bombs(wof_settings,bombs)
-        fns.update_screen(wof_settings, screen, hero, bombs)
+        fns.update_screen(wof_settings, screen, hero, diamonds,bombs)
 
 if __name__ == '__main__':
     run_game()
