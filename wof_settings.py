@@ -4,7 +4,7 @@
 # Bitmap images http://pixabay.com/
 # Released under a "Simplified BSD" license
 
-class GameSettings():
+class GameSettings(object):
     """
     Settings for the game 'Wages of Fear'
     """
@@ -20,3 +20,9 @@ class GameSettings():
         
         # Hero settings
         self.hero_speed_factor = 0.5
+        
+        # Bomb settings
+        self.bomb_timer = 1000 # wait before the bomb explodes
+        self.bombs_allowed = 3 # number of available bombs at a time
+        
+        self.running = True

@@ -6,8 +6,9 @@
 
 import sys
 import pygame
+from bomb import Bomb
 
-def check_keydown_events(event, hero):
+def check_keydown_events(event, wof_settings, screen, hero, bombs):
     """Respond to key presses"""
     if event.key == pygame.K_RIGHT or event.key == pygame.K_d:
         hero.moving_right = True
@@ -17,6 +18,8 @@ def check_keydown_events(event, hero):
         hero.moving_up = True
     if event.key == pygame.K_DOWN or event.key == pygame.K_s:
         hero.moving_down = True
+    elif event.key == pygame.K_SPACE:
+        put_bomb(wof_settings,screen,hero,bombs)
 
 def check_keyup_events(event, hero):
     """Respond to key releases"""
@@ -30,24 +33,45 @@ def check_keyup_events(event, hero):
         hero.moving_down = False
 
 
-def check_events(hero):
+def check_events(wof_settings, screen, hero, bombs):
     """
     Watch for keyboard and mouse events.
     """
     for event in pygame.event.get():
 
         if event.type == pygame.QUIT or (event.type == pygame.KEYUP and event.key == pygame.K_ESCAPE):
-                sys.exit()
+            wof_settings.running = False    
+            pygame.quit()
+            sys.exit(0)
         elif event.type == pygame.KEYDOWN:
+            check_keydown_events(event, wof_settings, screen, hero, bombs)
             # control the Hero movements
-            check_keydown_events(event, hero)
         elif event.type == pygame.KEYUP:
             check_keyup_events(event, hero)
 
-def update_screen(wof_settings,screen,hero):
+def update_screen(wof_settings,screen,hero,bombs):
     """
     Update images on the screen and flip to the new screen
     """
     screen.fill(wof_settings.bg_color)
+    for bomb in bombs.sprites():
+        bomb.draw_bomb()
     hero.blitme()
     pygame.display.flip()
+
+def put_bomb(wof_settings,screen,hero,bombs):
+    # Create a new bomb and add it to the bombs group.
+    if len(bombs) < wof_settings.bombs_allowed:
+        new_bomb = Bomb(wof_settings, screen, hero)
+        bombs.add(new_bomb)
+        
+def update_bombs(wof_settings,bombs):
+    """
+    Update animations of bombs and get rid of old bombs
+    """
+    bombs.update()
+    # Get rid of bombs that have exploded
+    for bomb in bombs.copy():
+        if bomb.counter == wof_settings.bomb_timer:
+            bomb.counter = 0
+            bombs.remove(bomb)

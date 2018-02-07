@@ -5,6 +5,7 @@
 # Released under a "Simplified BSD" license
 
 import pygame
+from pygame.sprite import Group
 from wof_settings import GameSettings
 from hero import Hero
 import functions as fns
@@ -17,10 +18,16 @@ def run_game():
     pygame.display.set_caption("The Wages of Fear")
     
     hero = Hero(wof_settings,screen) # create the hero
+    bombs = Group() # Make a group to store bombs in.
 
-    while True:
-        fns.check_events(hero)
+    while wof_settings.running:
+        # check if keys pressed or released
+        fns.check_events(wof_settings,screen,hero,bombs)
+        
         hero.update()
-        fns.update_screen(wof_settings, screen, hero)
+        
+        fns.update_bombs(wof_settings,bombs)
+        fns.update_screen(wof_settings, screen, hero, bombs)
 
-run_game()
+if __name__ == '__main__':
+    run_game()
