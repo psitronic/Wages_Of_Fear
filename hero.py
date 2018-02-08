@@ -2,6 +2,7 @@
 # By Andrey Sidorenko spintronic@tuta.io
 # The game inspired by 'Jeux et casse-tête à programmer' (Jacques Arsac, 1985)
 # Bitmap images http://pixabay.com/
+# WAV sounds/music https://freesound.org/ (Attribution 3.0 Unported)
 # Released under a "Simplified BSD" license
 
 import pygame

@@ -2,11 +2,13 @@
 # By Andrey Sidorenko spintronic@tuta.io
 # The game inspired by 'Jeux et casse-tête à programmer' (Jacques Arsac, 1985)
 # Bitmap images http://pixabay.com/
+# WAV sounds/music https://freesound.org/ (Attribution 3.0 Unported)
 # Released under a "Simplified BSD" license
 
 import sys
 import pygame
 from bomb import Bomb
+from explosion import Explosion
 from diamond import Diamond
 from random import randint, randrange
 
@@ -51,13 +53,16 @@ def check_events(wof_settings, screen, hero, bombs):
         elif event.type == pygame.KEYUP:
             check_keyup_events(event, hero)
 
-def update_screen(wof_settings,screen,hero,diamonds,bombs):
+def update_screen(wof_settings,screen,hero,diamonds,bombs,explosions):
     """
     Update images on the screen and flip to the new screen
     """
     screen.fill(wof_settings.bg_color)
     for bomb in bombs.sprites():
         bomb.draw_bomb()
+
+    for explosion in explosions.sprites():
+        explosion.draw_explosion()
         
     diamonds.draw(screen)
     hero.blitme()
@@ -69,7 +74,7 @@ def put_bomb(wof_settings,screen,hero,bombs):
         new_bomb = Bomb(wof_settings, screen, hero)
         bombs.add(new_bomb)
         
-def update_bombs(wof_settings,bombs,sound_bomb):
+def update_bombs(wof_settings,screen,bombs,explosions,sound_bomb):
     """
     Update animations of bombs and get rid of old bombs
     """
@@ -79,8 +84,21 @@ def update_bombs(wof_settings,bombs,sound_bomb):
         if bomb.counter == wof_settings.bomb_timer:
             sound_bomb.play()
             bomb.counter = 0
+            new_explosion = Explosion(wof_settings,screen,bomb)
             bombs.remove(bomb)
+            explosions.add(new_explosion)
             
+def update_explosions(explosions):
+    """
+    Update animations of exposions
+    """
+    explosions.update()
+    # Get rid of explosions
+    for explosion in explosions.copy():
+        if explosion.done == True:
+            explosion.counter = 0
+            explosion.done = False
+            explosions.remove(explosion)
             
 def put_diamond(wof_settings,screen,diamonds):
     # Create a diamond and place it to the random position

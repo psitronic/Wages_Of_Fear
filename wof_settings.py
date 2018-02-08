@@ -2,6 +2,7 @@
 # By Andrey Sidorenko spintronic@tuta.io
 # The game inspired by 'Jeux et casse-tête à programmer' (Jacques Arsac, 1985)
 # Bitmap images http://pixabay.com/
+# WAV sounds/music https://freesound.org/ (Attribution 3.0 Unported)
 # Released under a "Simplified BSD" license
 
 class GameSettings(object):
@@ -26,7 +27,7 @@ class GameSettings(object):
         self.max_diamonds = 10
         
         # Bomb settings
-        self.bomb_timer = 1000 # wait before the bomb explodes
-        self.bombs_allowed = 3 # number of available bombs at a time
+        self.bomb_timer = 500 # wait before the bomb explodes
+        self.bombs_allowed = 10 # number of available bombs at a time
         
         self.running = True
