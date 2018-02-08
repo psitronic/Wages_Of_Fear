@@ -6,6 +6,7 @@
 # Released under a "Simplified BSD" license
 
 import pygame
+from random import randint
 
 class Hero(object):
     """
@@ -19,7 +20,7 @@ class Hero(object):
         self.wof_settings = wof_settings
         
         self.image = pygame.image.load('images/penguin.bmp')
-        self.image_negative = pygame.image.load('images/penguin_negative.bmp')
+
         self.rect = self.image.get_rect()
         self.screen_rect = screen.get_rect()
         
@@ -35,18 +36,27 @@ class Hero(object):
         self.moving_up = False
         self.moving_down = False
         
+        self.alive = True
+        self.flyawayx = randint(-2,2)
+        self.flyawayy = randint(-2,2)
+        
     def update(self):
         """
         Update the hero position
         """
-        if self.moving_right and self.rect.right < self.screen_rect.right:
-            self.centerx += self.wof_settings.hero_speed_factor
-        if self.moving_left and self.rect.left > 0:
-            self.centerx -= self.wof_settings.hero_speed_factor
-        if self.moving_up and self.rect.top > 0:
-            self.centery -= self.wof_settings.hero_speed_factor
-        if self.moving_down and self.rect.bottom < self.screen_rect.bottom:
-            self.centery += self.wof_settings.hero_speed_factor
+        if self.alive:
+            if self.moving_right and self.rect.right < self.screen_rect.right:
+                self.centerx += self.wof_settings.hero_speed_factor
+            if self.moving_left and self.rect.left > 0:
+                self.centerx -= self.wof_settings.hero_speed_factor
+            if self.moving_up and self.rect.top > 0:
+                self.centery -= self.wof_settings.hero_speed_factor
+            if self.moving_down and self.rect.bottom < self.screen_rect.bottom:
+                self.centery += self.wof_settings.hero_speed_factor
+        else:
+            self.centerx += self.flyawayx
+            self.centery += self.flyawayy
+            self.image = pygame.transform.rotate(self.image,90)
             
         self.rect.centerx = self.centerx
         self.rect.centery = self.centery
