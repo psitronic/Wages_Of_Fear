@@ -19,6 +19,7 @@ class Hero(object):
         self.wof_settings = wof_settings
         
         self.image = pygame.image.load('images/penguin.bmp')
+        self.image_negative = pygame.image.load('images/penguin_negative.bmp')
         self.rect = self.image.get_rect()
         self.screen_rect = screen.get_rect()
         
@@ -49,8 +50,7 @@ class Hero(object):
             
         self.rect.centerx = self.centerx
         self.rect.centery = self.centery
-
-            
+    
     def blitme(self):
         """
         """

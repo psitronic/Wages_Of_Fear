@@ -88,17 +88,26 @@ def update_bombs(wof_settings,screen,bombs,explosions,sound_bomb):
             bombs.remove(bomb)
             explosions.add(new_explosion)
             
-def update_explosions(explosions):
+def update_explosions(explosions,diamonds,hero):
     """
     Update animations of exposions
     """
     explosions.update()
+    
     # Get rid of explosions
     for explosion in explosions.copy():
         if explosion.done == True:
             explosion.counter = 0
-            explosion.done = False
+            explosion.done = False # Check if there is an explosion "process" finished
+            destroy(explosions,diamonds,hero) # If the explosion hits an object, then remove it
             explosions.remove(explosion)
+
+def destroy(explosions,diamonds,hero):
+    """
+    Destroy objects if the explosion hits them
+    """
+    explosion_hits_diamonds = pygame.sprite.groupcollide(explosions,diamonds,False,True)
+    explosion_hits_hero = pygame.sprite.spritecollideany(hero,explosions)    
             
 def put_diamond(wof_settings,screen,diamonds):
     # Create a diamond and place it to the random position

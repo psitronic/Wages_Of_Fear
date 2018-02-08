@@ -9,11 +9,11 @@ import pygame
 from pygame.sprite import Sprite
 
 class Explosion(Sprite):
-    """A class to manage bombs thrown by the hero"""
+    """A class to manage bombs explosion"""
     
     def __init__(self,wof_settings,screen,bomb):
         """
-        Create a bomb object at the hero's current position
+        Create a explosion object at the exploded bomb position
         """
         
         super().__init__()
@@ -35,13 +35,13 @@ class Explosion(Sprite):
 
     def update(self):
         """
-        Create a bomb animation
+        Create a explosion animation
         """
         self.counter += 1
         if self.counter == 30:
             self.done = True
             
     def draw_explosion(self):
-        """Draw the bomb to the screen."""
+        """Draw the explosion to the screen."""
         self.screen.blit(self.explosion_image,self.rect)
 

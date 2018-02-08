@@ -39,7 +39,7 @@ def run_game():
         hero.update()
         fns.update_diamonds(hero,diamonds,sound_diamond)
         fns.update_bombs(wof_settings,screen,bombs,explosions,sound_bomb)
-        fns.update_explosions(explosions)
+        fns.update_explosions(explosions,diamonds,hero)
         fns.update_screen(wof_settings, screen, hero, diamonds,bombs,explosions)
 
 if __name__ == '__main__':
