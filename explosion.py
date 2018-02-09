@@ -23,6 +23,7 @@ class Explosion(Sprite):
         
         self.rect = self.explosion_image.get_rect()
         self.screen_rect = screen.get_rect()
+        self.mask = pygame.mask.from_surface(self.explosion_image)
         
         self.rect.centerx = bomb.rect.centerx
         self.rect.centery = bomb.rect.centery

@@ -106,8 +106,8 @@ def destroy(explosions,diamonds,hero):
     """
     Destroy objects if the explosion hits them
     """
-    explosion_hits_diamonds = pygame.sprite.groupcollide(explosions,diamonds,False,True)
-    explosion_hits_hero = pygame.sprite.spritecollideany(hero,explosions) 
+    explosion_hits_diamonds = pygame.sprite.groupcollide(explosions,diamonds,False,True,pygame.sprite.collide_mask)
+    explosion_hits_hero = pygame.sprite.spritecollideany(hero,explosions,pygame.sprite.collide_mask) 
     
     if explosion_hits_hero != None:
         hero.alive = False
@@ -143,7 +143,6 @@ def update_diamonds(hero,diamonds,sound_diamond):
     # If so, get rid of the diamond
     
     if hero.alive:
-        collision = pygame.sprite.spritecollide(hero, diamonds, True)
-        if collision:
+        if pygame.sprite.spritecollide(hero, diamonds, True, pygame.sprite.collide_mask):
          # Sound to play when the diamond picked up
          sound_diamond.play()

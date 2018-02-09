@@ -23,6 +23,7 @@ class Diamond(Sprite):
         
         self.image = pygame.image.load('images/crystals.bmp')
         self.rect = self.image.get_rect()
+        self.mask = pygame.mask.from_surface(self.image)
         
         self.rect.centerx = self.rect.width
         self.rect.centery = self.rect.height
