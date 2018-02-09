@@ -122,8 +122,8 @@ def put_diamond(wof_settings,screen,diamonds,walls):
     diamond_width = diamond.rect.width
     diamond_height = diamond.rect.height
 
-    diamond.x = randrange(2*diamond_width, wof_settings.width - 2*diamond_width)
-    diamond.y = randrange(2*diamond_height, wof_settings.height - 2*diamond_height)
+    diamond.x = randint(1, 20) * diamond_width
+    diamond.y = randint(1, 15) * diamond_height
     diamond.rect.x = diamond.x
     diamond.rect.y = diamond.y
     

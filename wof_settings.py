@@ -23,8 +23,8 @@ class GameSettings(object):
         self.hero_speed_factor = 3
         
         # Diamonds settings
-        self.min_diamonds = 15
-        self.max_diamonds = 25
+        self.min_diamonds = 25
+        self.max_diamonds = 35
         
         # Bomb settings
         self.bomb_timer = 70 # wait before the bomb explodes

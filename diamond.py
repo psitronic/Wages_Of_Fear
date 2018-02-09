@@ -21,7 +21,7 @@ class Diamond(Sprite):
         self.screen = screen
         self.wof_settings = wof_settings
         
-        self.image = pygame.image.load('images/crystals.bmp')
+        self.image = pygame.image.load('images/bitcoin.bmp')
         self.rect = self.image.get_rect()
         self.mask = pygame.mask.from_surface(self.image)
         

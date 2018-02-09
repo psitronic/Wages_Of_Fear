@@ -17,7 +17,7 @@ def run_game():
     wof_settings = GameSettings()
     screen = pygame.display.set_mode((wof_settings.width, wof_settings.height))
     pygame.display.set_caption("The Wages of Fear")
-    sound_diamond = pygame.mixer.Sound('sounds/crystal.wav')
+    sound_diamond = pygame.mixer.Sound('sounds/coin.wav')
     sound_bomb = pygame.mixer.Sound('sounds/explosion.wav')
     
     pygame.mixer.music.load('sounds/background-music.mp3')
