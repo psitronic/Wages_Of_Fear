@@ -20,14 +20,17 @@ class GameSettings(object):
         self.bg_color = (230,230,230)
         
         # Hero settings
-        self.hero_speed_factor = 1
+        self.hero_speed_factor = 3
         
         # Diamonds settings
-        self.min_diamonds = 5
-        self.max_diamonds = 10
+        self.min_diamonds = 15
+        self.max_diamonds = 25
         
         # Bomb settings
-        self.bomb_timer = 500 # wait before the bomb explodes
-        self.bombs_allowed = 10 # number of available bombs at a time
+        self.bomb_timer = 70 # wait before the bomb explodes
+        self.bombs_allowed = 3 # number of available bombs at a time
+        
+        # Name of the file containing maps for levels
+        self.levels_file = "levels.txt"
         
         self.running = True

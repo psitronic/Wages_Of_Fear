@@ -10,6 +10,7 @@ import pygame
 from bomb import Bomb
 from explosion import Explosion
 from diamond import Diamond
+from wall import Wall
 from random import randint, randrange
 
 def check_keydown_events(event, wof_settings, screen, hero, bombs):
@@ -53,17 +54,18 @@ def check_events(wof_settings, screen, hero, bombs):
         elif event.type == pygame.KEYUP:
             check_keyup_events(event, hero)
 
-def update_screen(wof_settings,screen,hero,diamonds,bombs,explosions):
+def update_screen(wof_settings,screen,walls,hero,diamonds,bombs,explosions):
     """
     Update images on the screen and flip to the new screen
     """
     screen.fill(wof_settings.bg_color)
+    walls.draw(screen) 
     for bomb in bombs.sprites():
         bomb.draw_bomb()
 
     for explosion in explosions.sprites():
         explosion.draw_explosion()
-        
+            
     diamonds.draw(screen)
     hero.blitme()
     pygame.display.flip()
@@ -112,7 +114,7 @@ def destroy(explosions,diamonds,hero):
     if explosion_hits_hero != None:
         hero.alive = False
             
-def put_diamond(wof_settings,screen,diamonds):
+def put_diamond(wof_settings,screen,diamonds,walls):
     # Create a diamond and place it to the random position
     # Spacing between a diamond and the edges is equal to two diamond widths or heights
 
@@ -124,19 +126,29 @@ def put_diamond(wof_settings,screen,diamonds):
     diamond.y = randrange(2*diamond_height, wof_settings.height - 2*diamond_height)
     diamond.rect.x = diamond.x
     diamond.rect.y = diamond.y
+    
+    # check if the position is occupied
+    diamond_hit_diamond = pygame.sprite.spritecollideany(diamond, diamonds)
+    diamond_hit_walls = pygame.sprite.spritecollideany(diamond, walls)
 
-    if pygame.sprite.spritecollideany(diamond, diamonds) == None:
+    if diamond_hit_diamond == None and diamond_hit_walls == None:
         diamonds.add(diamond)
+        return True
     else:
         diamond.kill()
+        return False
 
-def create_diamonds(wof_settings,screen,diamonds):
+def create_diamonds(wof_settings,screen,diamonds,walls):
     """
     Create a random set of diamonds
     """
+    maxDiamonds = randint(wof_settings.min_diamonds,wof_settings.max_diamonds)
+    total = 0 
     
-    for diamond_number in range(0,randint(wof_settings.min_diamonds,wof_settings.max_diamonds)):
-        put_diamond(wof_settings,screen,diamonds)
+    while total < maxDiamonds:
+        if put_diamond(wof_settings,screen,diamonds,walls):
+            total += 1
+            
 
 def update_diamonds(hero,diamonds,sound_diamond):
     # Check for hero has hit any bullets
@@ -146,3 +158,42 @@ def update_diamonds(hero,diamonds,sound_diamond):
         if pygame.sprite.spritecollide(hero, diamonds, True, pygame.sprite.collide_mask):
          # Sound to play when the diamond picked up
          sound_diamond.play()
+         
+def create_walls(wof_settings,screen,walls):
+    """
+    Create walls and randomly distributed barriers 
+    """
+    
+    level_map = readLevelsFile(wof_settings.levels_file)
+    
+    block = Wall(wof_settings,screen)
+    
+    block_width = block.rect.width
+    block_height = block.rect.height        
+    
+    # Create the top and bottom walls
+    for block_position in level_map:
+        block = Wall(wof_settings,screen)
+        block.x = block_position[1] * block_width
+        block.y = block_position[0] * block_height
+        block.rect.x = block.x
+        block.rect.y = block.y
+        walls.add(block)
+        
+
+
+def readLevelsFile(filename):
+    mf = open(filename, 'r')
+    # Each level must end with a blank line
+    content = mf.readlines() + ['\r\n']
+    mf.close()
+    level_map = []
+    for lineNum in range(len(content)):
+        # Process each line that was in the level file.
+        line = content[lineNum].rstrip('\r\n')
+        
+        for symbolNum in range(len(line)):
+            if line[symbolNum] == "#":
+                level_map.append((lineNum,symbolNum))
+                
+    return level_map

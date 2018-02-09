@@ -7,23 +7,22 @@
 
 import pygame
 from pygame.sprite import Sprite
-from random import randint
 
-class Diamond(Sprite):
-    """A class to represent a diamond"""
+class Wall(Sprite):
+    """A class to create blocks and walls in the game"""
     
     def __init__(self,wof_settings,screen):
         """
-        Initialize the diamond and set its random position
+        Create a block/wall object at the specified position
         """
         
         super().__init__()
         self.screen = screen
-        self.wof_settings = wof_settings
+                
+        self.image = pygame.image.load('images/decoration.png')
         
-        self.image = pygame.image.load('images/crystals.bmp')
         self.rect = self.image.get_rect()
-        self.mask = pygame.mask.from_surface(self.image)
+        self.screen_rect = screen.get_rect()
         
         self.rect.centerx = self.rect.width
         self.rect.centery = self.rect.height
@@ -31,6 +30,6 @@ class Diamond(Sprite):
         self.x = float(self.rect.x)
         self.y = float(self.rect.y)
         
-    def blit_diamond(self):
-        """Draw the diamond to the screen."""
+    def draw_wall(self):
+        """Draw the wall/blocks to the screen."""
         self.screen.blit(self.image,self.rect)

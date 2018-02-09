@@ -24,23 +24,26 @@ def run_game():
     pygame.mixer.music.play(-1)
 
     
+    walls = Group()  # Make a group to store walls
     hero = Hero(wof_settings,screen) # create the hero
     bombs = Group() # Make a group to store bombs in
     diamonds = Group() # Make a group to store all diamonds in
     explosions = Group()
     
+    # Create walls and barriers
+    fns.create_walls(wof_settings,screen,walls)
     # Create the diamonds
-    fns.create_diamonds(wof_settings,screen,diamonds)
+    fns.create_diamonds(wof_settings,screen,diamonds,walls)
 
     while wof_settings.running:
         # check if keys pressed or released
         fns.check_events(wof_settings,screen,hero,bombs)
         
-        hero.update()
+        hero.update(walls)
         fns.update_diamonds(hero,diamonds,sound_diamond)
         fns.update_bombs(wof_settings,screen,bombs,explosions,sound_bomb)
         fns.update_explosions(explosions,diamonds,hero)
-        fns.update_screen(wof_settings, screen, hero, diamonds,bombs,explosions)
+        fns.update_screen(wof_settings, screen, walls,hero, diamonds,bombs,explosions)
 
 if __name__ == '__main__':
     run_game()
