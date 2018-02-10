@@ -39,7 +39,7 @@ class Explosion(Sprite):
         Create a explosion animation
         """
         self.counter += 1
-        if self.counter == 5:
+        if self.counter == 7:
             self.done = True
             
     def draw_explosion(self):

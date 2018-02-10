@@ -11,6 +11,7 @@ from bomb import Bomb
 from explosion import Explosion
 from diamond import Diamond
 from wall import Wall
+from inkblot import Inkblot
 from random import randint, randrange
 
 def check_keydown_events(event, wof_settings, screen, hero, bombs):
@@ -54,7 +55,7 @@ def check_events(wof_settings, screen, hero, bombs):
         elif event.type == pygame.KEYUP:
             check_keyup_events(event, hero)
 
-def update_screen(wof_settings,screen,walls,hero,diamonds,bombs,explosions):
+def update_screen(wof_settings,screen,walls,hero,diamonds,bombs,explosions,inkblots):
     """
     Update images on the screen and flip to the new screen
     """
@@ -67,12 +68,17 @@ def update_screen(wof_settings,screen,walls,hero,diamonds,bombs,explosions):
         explosion.draw_explosion()
             
     diamonds.draw(screen)
+    
+    for inkblot in inkblots.sprites():
+        inkblot.draw_inkblot()
+    
     hero.blitme()
+    
     pygame.display.flip()
 
 def put_bomb(wof_settings,screen,hero,bombs):
     # Create a new bomb and add it to the bombs group.
-    if len(bombs) < wof_settings.bombs_allowed:
+    if hero.alive and len(bombs) < wof_settings.bombs_allowed:
         new_bomb = Bomb(wof_settings, screen, hero)
         bombs.add(new_bomb)
         
@@ -156,8 +162,8 @@ def update_diamonds(hero,diamonds,sound_diamond):
     
     if hero.alive:
         if pygame.sprite.spritecollide(hero, diamonds, True, pygame.sprite.collide_mask):
-         # Sound to play when the diamond picked up
-         sound_diamond.play()
+            # Sound to play when the diamond picked up
+            sound_diamond.play()
          
 def create_walls(wof_settings,screen,walls):
     """
@@ -180,6 +186,8 @@ def create_walls(wof_settings,screen,walls):
         block.rect.y = block.y
         walls.add(block)
         
+    return level_map
+        
 
 
 def readLevelsFile(filename):
@@ -197,3 +205,43 @@ def readLevelsFile(filename):
                 level_map.append((lineNum,symbolNum))
                 
     return level_map
+
+def create_inkblots(screen,inkblots,walls,diamonds,hero):
+    
+    created = False
+    
+    while not created:
+
+        inkblot = Inkblot(screen)
+        inkblot.x = randint(1, 20) * 32
+        inkblot.y = randint(1, 15) * 32
+        inkblot.rect.x = inkblot.x
+        inkblot.rect.y = inkblot.y
+        
+        # check if the position is occupied
+        inkblot_hit_diamond = pygame.sprite.spritecollideany(inkblot, diamonds)
+        inkblot_hit_walls = pygame.sprite.spritecollideany(inkblot, walls)
+    
+        if inkblot_hit_diamond == None and inkblot_hit_walls == None:
+            inkblots.add(inkblot)
+            created = True
+        else:
+            inkblot.kill()
+            created = False
+
+def update_inkblots(inkblots,walls,diamonds,levelMap):
+    """
+    Update animations of inkblots and change their positions
+    """
+    inkblots.update()
+    
+    for inkblot in inkblots.copy():
+        if inkblot.changePosition:
+            newPosX = randint(1, 20)
+            newPosY = randint(1, 15)
+            if (newPosY,newPosX) not in levelMap:
+                inkblot.rect.x = newPosX * 32
+                inkblot.rect.y = newPosY * 32
+                inkblot.changePosition = False
+
+            

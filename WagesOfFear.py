@@ -12,38 +12,45 @@ from hero import Hero
 import functions as fns
 
 def run_game():
-    # Initialize game and create a screen object.
+    # Initialize game and create a screen object
     pygame.init()
     wof_settings = GameSettings()
     screen = pygame.display.set_mode((wof_settings.width, wof_settings.height))
     pygame.display.set_caption("The Wages of Fear")
+    
+    # load sounds for events
     sound_diamond = pygame.mixer.Sound('sounds/coin.wav')
     sound_bomb = pygame.mixer.Sound('sounds/explosion.wav')
     
+    # play background music - infinit loop
     pygame.mixer.music.load('sounds/background-music.mp3')
     pygame.mixer.music.play(-1)
 
-    
+    # create groups and objects
     walls = Group()  # Make a group to store walls
     hero = Hero(wof_settings,screen) # create the hero
     bombs = Group() # Make a group to store bombs in
     diamonds = Group() # Make a group to store all diamonds in
     explosions = Group()
+    inkblots = Group()
     
     # Create walls and barriers
-    fns.create_walls(wof_settings,screen,walls)
+    levelMap = fns.create_walls(wof_settings,screen,walls)
     # Create the diamonds
     fns.create_diamonds(wof_settings,screen,diamonds,walls)
+    
+    fns.create_inkblots(screen,inkblots,walls,diamonds,hero)
 
     while wof_settings.running:
+        # here is the game logic
         # check if keys pressed or released
-        fns.check_events(wof_settings,screen,hero,bombs)
-        
+        fns.check_events(wof_settings,screen,hero,bombs)        
         hero.update(walls)
+        fns.update_inkblots(inkblots,walls,diamonds,levelMap)
         fns.update_diamonds(hero,diamonds,sound_diamond)
         fns.update_bombs(wof_settings,screen,bombs,explosions,sound_bomb)
         fns.update_explosions(explosions,diamonds,hero)
-        fns.update_screen(wof_settings, screen, walls,hero, diamonds,bombs,explosions)
+        fns.update_screen(wof_settings, screen, walls,hero, diamonds,bombs,explosions,inkblots)
 
 if __name__ == '__main__':
     run_game()
