@@ -21,6 +21,7 @@ def run_game():
     # load sounds for events
     sound_diamond = pygame.mixer.Sound('sounds/coin.wav')
     sound_bomb = pygame.mixer.Sound('sounds/explosion.wav')
+    sound_blot = pygame.mixer.Sound('sounds/splash.wav')
     
     # play background music - infinit loop
     pygame.mixer.music.load('sounds/background-music.mp3')
@@ -46,10 +47,10 @@ def run_game():
         # check if keys pressed or released
         fns.check_events(wof_settings,screen,hero,bombs)        
         hero.update(walls)
-        fns.update_inkblots(inkblots,walls,diamonds,levelMap)
+        fns.update_inkblots(inkblots,walls,diamonds,hero,levelMap,sound_blot)
         fns.update_diamonds(hero,diamonds,sound_diamond)
         fns.update_bombs(wof_settings,screen,bombs,explosions,sound_bomb)
-        fns.update_explosions(explosions,diamonds,hero)
+        fns.update_explosions(explosions,inkblots,hero)
         fns.update_screen(wof_settings, screen, walls,hero, diamonds,bombs,explosions,inkblots)
 
 if __name__ == '__main__':

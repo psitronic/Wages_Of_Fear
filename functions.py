@@ -110,11 +110,11 @@ def update_explosions(explosions,diamonds,hero):
             destroy(explosions,diamonds,hero) # If the explosion hits an object, then remove it
             explosions.remove(explosion)
 
-def destroy(explosions,diamonds,hero):
+def destroy(explosions,inkblots,hero):
     """
     Destroy objects if the explosion hits them
     """
-    explosion_hits_diamonds = pygame.sprite.groupcollide(explosions,diamonds,False,True,pygame.sprite.collide_mask)
+    explosion_hits_inkblot = pygame.sprite.groupcollide(explosions,inkblots,False,True,pygame.sprite.collide_mask)
     explosion_hits_hero = pygame.sprite.spritecollideany(hero,explosions,pygame.sprite.collide_mask) 
     
     if explosion_hits_hero != None:
@@ -208,28 +208,32 @@ def readLevelsFile(filename):
 
 def create_inkblots(screen,inkblots,walls,diamonds,hero):
     
-    created = False
+    maxDiamonds = randint(1,5)
+    total = 0 
     
-    while not created:
-
-        inkblot = Inkblot(screen)
-        inkblot.x = randint(1, 20) * 32
-        inkblot.y = randint(1, 15) * 32
-        inkblot.rect.x = inkblot.x
-        inkblot.rect.y = inkblot.y
+    while total < maxDiamonds:
+        total += 1
+        created = False
+        while not created:
+    
+            inkblot = Inkblot(screen)
+            inkblot.x = randint(1, 20) * 32
+            inkblot.y = randint(1, 15) * 32
+            inkblot.rect.x = inkblot.x
+            inkblot.rect.y = inkblot.y
+            
+            # check if the position is occupied
+            inkblot_hit_diamond = pygame.sprite.spritecollideany(inkblot, diamonds)
+            inkblot_hit_walls = pygame.sprite.spritecollideany(inkblot, walls)
         
-        # check if the position is occupied
-        inkblot_hit_diamond = pygame.sprite.spritecollideany(inkblot, diamonds)
-        inkblot_hit_walls = pygame.sprite.spritecollideany(inkblot, walls)
-    
-        if inkblot_hit_diamond == None and inkblot_hit_walls == None:
-            inkblots.add(inkblot)
-            created = True
-        else:
-            inkblot.kill()
-            created = False
+            if inkblot_hit_diamond == None and inkblot_hit_walls == None:
+                inkblots.add(inkblot)
+                created = True
+            else:
+                inkblot.kill()
+                created = False
 
-def update_inkblots(inkblots,walls,diamonds,levelMap):
+def update_inkblots(inkblots,walls,diamonds,hero,levelMap,sound_blot):
     """
     Update animations of inkblots and change their positions
     """
@@ -243,5 +247,10 @@ def update_inkblots(inkblots,walls,diamonds,levelMap):
                 inkblot.rect.x = newPosX * 32
                 inkblot.rect.y = newPosY * 32
                 inkblot.changePosition = False
-
+    
+    inkblot_hits_hero = pygame.sprite.spritecollide(hero,inkblots,True,pygame.sprite.collide_mask) 
+    
+    if inkblot_hits_hero:
+        sound_blot.play()
+        hero.alive = False
             
