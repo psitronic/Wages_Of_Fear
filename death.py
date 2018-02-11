@@ -7,6 +7,7 @@
 
 import pygame
 from pygame.sprite import Sprite
+from random import randint
 
 class Death(Sprite):
     """
@@ -38,43 +39,37 @@ class Death(Sprite):
         self.moving_left = False
         self.moving_up = False
         self.moving_down = False
+        self.hitWall = False
+ 
+        self.deltaX = 1
+        self.deltaY = 1
 
         
-    def update(self, walls):
+    def update(self, walls,inkblots):
         """
         Update the death position
         """
-        if self.moving_right:
-            self.rect.left += 2 * self.wof_settings.death_speed_factor
-        if self.moving_left:
-            self.rect.left -= self.wof_settings.death_speed_factor
-
-        # check if we hit the wall/block
-        death_hit_wall = pygame.sprite.spritecollide(self, walls, False,pygame.sprite.collide_mask)        
-        for wall in death_hit_wall:
-            if self.moving_right:
-                self.rect.right = wall.rect.left
-                self.moving_left = True
-            if self.moving_left:
-                self.rect.left = wall.rect.right
-                self.moving_right = True
-
-
-        if self.moving_up:
-            self.rect.top += 2 * self.wof_settings.death_speed_factor
-        if self.moving_down:
-            self.rect.top -= self.wof_settings.death_speed_factor
-
-        # check if we hit the wall/block
-        death_hit_wall = pygame.sprite.spritecollide(self, walls, False,pygame.sprite.collide_mask)        
-        for wall in death_hit_wall:
-            if self.moving_down:
-                self.rect.bottom = wall.rect.top
-                self.moving_up = True
-            if self.moving_up:
-                self.rect.top = wall.rect.bottom
-                self.moving_down = True
-
+        old_x = self.rect.centerx
+        old_y = self.rect.centery
+        
+        self.rect.centerx += self.deltaX * self.wof_settings.death_speed_factor
+        self.rect.centery += self.deltaY * self.wof_settings.death_speed_factor
+        
+        if not pygame.sprite.spritecollide(self, walls, False,pygame.sprite.collide_mask) and not pygame.sprite.spritecollide(self, inkblots, False):
+            old_x = self.rect.centerx
+            old_y = self.rect.centery
+        else:
+            self.rect.centerx = old_x
+            self.rect.centery = old_y
+            choise = randint(0,3)
+            if choise == 0:
+                self.deltaX = 1
+            if choise == 1:
+                self.deltaX =-1
+            if choise == 2:
+                self.deltaY = 1
+            if choise == 3:
+                self.deltaY =-1
                 
     def draw_death(self):
         """

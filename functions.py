@@ -100,7 +100,7 @@ def update_bombs(wof_settings,screen,bombs,explosions,sound_bomb):
             bombs.remove(bomb)
             explosions.add(new_explosion)
             
-def update_explosions(explosions,diamonds,hero):
+def update_explosions(explosions,diamonds,hero,deaths):
     """
     Update animations of exposions
     """
@@ -111,15 +111,16 @@ def update_explosions(explosions,diamonds,hero):
         if explosion.done == True:
             explosion.counter = 0
             explosion.done = False # Check if there is an explosion "process" finished
-            destroy(explosions,diamonds,hero) # If the explosion hits an object, then remove it
+            destroy(explosions,diamonds,hero,deaths) # If the explosion hits an object, then remove it
             explosions.remove(explosion)
 
-def destroy(explosions,inkblots,hero):
+def destroy(explosions,inkblots,hero,deaths):
     """
     Destroy objects if the explosion hits them
     """
     explosion_hits_inkblot = pygame.sprite.groupcollide(explosions,inkblots,False,True,pygame.sprite.collide_mask)
-    explosion_hits_hero = pygame.sprite.spritecollideany(hero,explosions,pygame.sprite.collide_mask) 
+    explosion_hits_hero = pygame.sprite.spritecollideany(hero,explosions,pygame.sprite.collide_mask)
+    explosion_hits_death = pygame.sprite.groupcollide(explosions,deaths,False,True,pygame.sprite.collide_mask)
     
     if explosion_hits_hero != None:
         hero.alive = False
@@ -258,10 +259,10 @@ def update_inkblots(inkblots,walls,diamonds,hero,levelMap,sound_blot):
         sound_blot.play()
         hero.alive = False
 
-def create_deaths(wof_settings,screen,deaths,walls,levelMap):
+def create_deaths(wof_settings,screen,deaths,walls,inkblots,levelMap):
 
     
-    maxDeaths = randint(2,4)
+    maxDeaths = randint(10,15)
     total = 0 
     
     while total < maxDeaths:
@@ -272,37 +273,27 @@ def create_deaths(wof_settings,screen,deaths,walls,levelMap):
             death = Death(wof_settings,screen)
             death.x = randint(1, 20) * 32
             death.y = randint(1, 15) * 32
-            death.rect.x = death.x
-            death.rect.y = death.y
+            death.rect.x = float(death.x)
+            death.rect.y = float(death.y)
             
             # check if the position is occupied
             death_hit_walls = pygame.sprite.spritecollideany(death, walls)
+            death_hit_inkblots = pygame.sprite.spritecollideany(death, inkblots)
         
-            if death_hit_walls == None:
+            if death_hit_walls == None and death_hit_inkblots == None:
                 deaths.add(death)
                 created = True
             else:
                 death.kill()
                 created = False
-
-def update_deaths(deaths,hero,walls,levelMap):
+            
+    deaths.update(walls,inkblots)
     
-    deaths.update(walls)
-        
-    for death in deaths.copy():
-        if hero.alive:
-            if death.rect.centerx - hero.rect.centerx > 0:
-                death.moving_left = True
-                death.moving_right = False
-            if death.rect.centerx - hero.rect.centerx <= 0:
-                death.moving_right = True
-                death.moving_left = False
+def update_deaths(hero,deaths,walls,inkblots):
+    deaths.update(walls,inkblots)
     
-            if death.rect.centery - hero.rect.centery < 0:
-                death.moving_up = True
-                death.moving_down = False
-            if death.rect.centery - hero.rect.centery >= 0:
-                death.moving_down = True
-                death.moving_up = False
-        else:
-            death.wof_settings.death_speed_factor = 0
+    death_hits_hero = pygame.sprite.spritecollide(hero,deaths,True,pygame.sprite.collide_mask) 
+    
+    if death_hits_hero:
+        #sound_blot.play()
+        hero.alive = False
