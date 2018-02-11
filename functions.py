@@ -11,6 +11,7 @@ from bomb import Bomb
 from explosion import Explosion
 from diamond import Diamond
 from wall import Wall
+from death import Death
 from inkblot import Inkblot
 from random import randint, randrange
 
@@ -55,7 +56,7 @@ def check_events(wof_settings, screen, hero, bombs):
         elif event.type == pygame.KEYUP:
             check_keyup_events(event, hero)
 
-def update_screen(wof_settings,screen,walls,hero,diamonds,bombs,explosions,inkblots):
+def update_screen(wof_settings,screen,walls,hero,diamonds,bombs,explosions,inkblots,deaths):
     """
     Update images on the screen and flip to the new screen
     """
@@ -73,6 +74,9 @@ def update_screen(wof_settings,screen,walls,hero,diamonds,bombs,explosions,inkbl
         inkblot.draw_inkblot()
     
     hero.blitme()
+
+    for death in deaths.sprites():
+        death.draw_death()
     
     pygame.display.flip()
 
@@ -208,10 +212,10 @@ def readLevelsFile(filename):
 
 def create_inkblots(screen,inkblots,walls,diamonds,hero):
     
-    maxDiamonds = randint(1,5)
+    maxInkblots = randint(4,7)
     total = 0 
     
-    while total < maxDiamonds:
+    while total < maxInkblots:
         total += 1
         created = False
         while not created:
@@ -253,4 +257,52 @@ def update_inkblots(inkblots,walls,diamonds,hero,levelMap,sound_blot):
     if inkblot_hits_hero:
         sound_blot.play()
         hero.alive = False
+
+def create_deaths(wof_settings,screen,deaths,walls,levelMap):
+
+    
+    maxDeaths = randint(2,4)
+    total = 0 
+    
+    while total < maxDeaths:
+        total += 1
+        created = False
+        while not created:
+    
+            death = Death(wof_settings,screen)
+            death.x = randint(1, 20) * 32
+            death.y = randint(1, 15) * 32
+            death.rect.x = death.x
+            death.rect.y = death.y
             
+            # check if the position is occupied
+            death_hit_walls = pygame.sprite.spritecollideany(death, walls)
+        
+            if death_hit_walls == None:
+                deaths.add(death)
+                created = True
+            else:
+                death.kill()
+                created = False
+
+def update_deaths(deaths,hero,walls,levelMap):
+    
+    deaths.update(walls)
+        
+    for death in deaths.copy():
+        if hero.alive:
+            if death.rect.centerx - hero.rect.centerx > 0:
+                death.moving_left = True
+                death.moving_right = False
+            if death.rect.centerx - hero.rect.centerx <= 0:
+                death.moving_right = True
+                death.moving_left = False
+    
+            if death.rect.centery - hero.rect.centery < 0:
+                death.moving_up = True
+                death.moving_down = False
+            if death.rect.centery - hero.rect.centery >= 0:
+                death.moving_down = True
+                death.moving_up = False
+        else:
+            death.wof_settings.death_speed_factor = 0

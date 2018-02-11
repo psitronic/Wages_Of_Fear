@@ -34,6 +34,7 @@ def run_game():
     diamonds = Group() # Make a group to store all diamonds in
     explosions = Group()
     inkblots = Group()
+    deaths = Group()
     
     # Create walls and barriers
     levelMap = fns.create_walls(wof_settings,screen,walls)
@@ -42,16 +43,19 @@ def run_game():
     
     fns.create_inkblots(screen,inkblots,walls,diamonds,hero)
 
+    fns.create_deaths(wof_settings,screen,deaths,walls,levelMap)
+
     while wof_settings.running:
         # here is the game logic
         # check if keys pressed or released
         fns.check_events(wof_settings,screen,hero,bombs)        
         hero.update(walls)
         fns.update_inkblots(inkblots,walls,diamonds,hero,levelMap,sound_blot)
+        #fns.update_deaths(deaths,hero,walls,levelMap)
         fns.update_diamonds(hero,diamonds,sound_diamond)
         fns.update_bombs(wof_settings,screen,bombs,explosions,sound_bomb)
         fns.update_explosions(explosions,inkblots,hero)
-        fns.update_screen(wof_settings, screen, walls,hero, diamonds,bombs,explosions,inkblots)
+        fns.update_screen(wof_settings, screen, walls,hero, diamonds,bombs,explosions,inkblots,deaths)
 
 if __name__ == '__main__':
     run_game()

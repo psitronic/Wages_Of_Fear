@@ -22,6 +22,7 @@ class Wall(Sprite):
         self.image = pygame.image.load('images/vinyl.png')
         
         self.rect = self.image.get_rect()
+        self.mask = pygame.mask.from_surface(self.image)
         self.screen_rect = screen.get_rect()
         
         self.rect.centerx = self.rect.width
