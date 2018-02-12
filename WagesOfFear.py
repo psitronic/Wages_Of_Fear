@@ -23,6 +23,9 @@ def run_game():
     sound_bomb = pygame.mixer.Sound('sounds/explosion.wav')
     sound_blot = pygame.mixer.Sound('sounds/splash.wav')
     
+    #
+    levelMap = fns.readLevelsFile(wof_settings.levels_file)
+
     # play background music - infinit loop
     pygame.mixer.music.load('sounds/background-music.mp3')
     pygame.mixer.music.play(-1)
@@ -37,9 +40,9 @@ def run_game():
     deaths = Group()
     
     # Create walls and barriers
-    levelMap = fns.create_walls(wof_settings,screen,walls)
+    fns.create_walls(screen,walls,levelMap)
     # Create the diamonds
-    fns.create_diamonds(wof_settings,screen,diamonds,walls)
+    fns.create_diamonds(screen,diamonds,levelMap)
     
     fns.create_inkblots(screen,inkblots,walls,diamonds,hero)
 

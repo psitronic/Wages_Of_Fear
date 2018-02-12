@@ -11,7 +11,7 @@ from pygame.sprite import Sprite
 class Wall(Sprite):
     """A class to create blocks and walls in the game"""
     
-    def __init__(self,wof_settings,screen):
+    def __init__(self,screen):
         """
         Create a block/wall object at the specified position
         """

@@ -25,9 +25,6 @@ class GameSettings(object):
         # Death settings
         self.death_speed_factor = 1
 
-        # Diamonds settings
-        self.min_diamonds = 60
-        self.max_diamonds = 80
         
         # Bomb settings
         self.bomb_timer = 70 # wait before the bomb explodes

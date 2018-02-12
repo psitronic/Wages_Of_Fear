@@ -125,41 +125,23 @@ def destroy(explosions,inkblots,hero,deaths):
     if explosion_hits_hero != None:
         hero.alive = False
             
-def put_diamond(wof_settings,screen,diamonds,walls):
-    # Create a diamond and place it to the random position
-    # Spacing between a diamond and the edges is equal to two diamond widths or heights
-
-    diamond = Diamond(wof_settings, screen)
+def create_diamonds(screen,diamonds,levelMap):
+    """
+    Create a set of diamonds
+    """
+    
+    diamond = Diamond(screen)        
     diamond_width = diamond.rect.width
-    diamond_height = diamond.rect.height
-
-    diamond.x = randint(1, 20) * diamond_width
-    diamond.y = randint(1, 15) * diamond_height
-    diamond.rect.x = diamond.x
-    diamond.rect.y = diamond.y
+    diamond_height = diamond.rect.height  
     
-    # check if the position is occupied
-    diamond_hit_diamond = pygame.sprite.spritecollideany(diamond, diamonds)
-    diamond_hit_walls = pygame.sprite.spritecollideany(diamond, walls)
-
-    if diamond_hit_diamond == None and diamond_hit_walls == None:
-        diamonds.add(diamond)
-        return True
-    else:
-        diamond.kill()
-        return False
-
-def create_diamonds(wof_settings,screen,diamonds,walls):
-    """
-    Create a random set of diamonds
-    """
-    maxDiamonds = randint(wof_settings.min_diamonds,wof_settings.max_diamonds)
-    total = 0 
-    
-    while total < maxDiamonds:
-        if put_diamond(wof_settings,screen,diamonds,walls):
-            total += 1
-            
+    # Place the diamonds to the field
+    for diamond_position in levelMap['diamond']:
+        diamond = Diamond(screen)
+        diamond.x = diamond_position[1] * diamond_width
+        diamond.y = diamond_position[0] * diamond_height
+        diamond.rect.x = diamond.x
+        diamond.rect.y = diamond.y
+        diamonds.add(diamond)            
 
 def update_diamonds(hero,diamonds,sound_diamond):
     # Check for hero has hit any bullets
@@ -170,28 +152,24 @@ def update_diamonds(hero,diamonds,sound_diamond):
             # Sound to play when the diamond picked up
             sound_diamond.play()
          
-def create_walls(wof_settings,screen,walls):
+def create_walls(screen,walls,levelMap):
     """
     Create walls and randomly distributed barriers 
     """
-    
-    level_map = readLevelsFile(wof_settings.levels_file)
-    
-    block = Wall(wof_settings,screen)
+        
+    block = Wall(screen)
     
     block_width = block.rect.width
     block_height = block.rect.height        
     
     # Create the top and bottom walls
-    for block_position in level_map:
-        block = Wall(wof_settings,screen)
+    for block_position in levelMap['wall']:
+        block = Wall(screen)
         block.x = block_position[1] * block_width
         block.y = block_position[0] * block_height
         block.rect.x = block.x
         block.rect.y = block.y
         walls.add(block)
-        
-    return level_map
         
 
 
@@ -200,14 +178,18 @@ def readLevelsFile(filename):
     # Each level must end with a blank line
     content = mf.readlines() + ['\r\n']
     mf.close()
-    level_map = []
+    level_map = {'wall':[],
+                 'diamond':[]}
     for lineNum in range(len(content)):
         # Process each line that was in the level file.
         line = content[lineNum].rstrip('\r\n')
         
         for symbolNum in range(len(line)):
             if line[symbolNum] == "#":
-                level_map.append((lineNum,symbolNum))
+                level_map['wall'].append((lineNum,symbolNum))
+            if line[symbolNum] == "d":
+                level_map['diamond'].append((lineNum,symbolNum))
+
                 
     return level_map
 
@@ -248,7 +230,7 @@ def update_inkblots(inkblots,walls,diamonds,hero,levelMap,sound_blot):
         if inkblot.changePosition:
             newPosX = randint(1, 20)
             newPosY = randint(1, 15)
-            if (newPosY,newPosX) not in levelMap:
+            if (newPosY,newPosX) not in levelMap['wall']:
                 inkblot.rect.x = newPosX * 32
                 inkblot.rect.y = newPosY * 32
                 inkblot.changePosition = False

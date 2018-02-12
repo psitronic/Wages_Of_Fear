@@ -12,14 +12,13 @@ from pygame.sprite import Sprite
 class Diamond(Sprite):
     """A class to represent a diamond"""
     
-    def __init__(self,wof_settings,screen):
+    def __init__(self,screen):
         """
         Initialize the diamond and set its random position
         """
         
         super().__init__()
         self.screen = screen
-        self.wof_settings = wof_settings
         
         self.image = pygame.image.load('images/bitcoin.bmp')
         self.rect = self.image.get_rect()
