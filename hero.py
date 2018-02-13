@@ -14,7 +14,7 @@ class Hero(Sprite):
     """
     
     """
-    def __init__(self,wof_settings,screen):
+    def __init__(self,wof_settings,screen,position):
         """
         The Hero's settings initialization
         """
@@ -28,11 +28,11 @@ class Hero(Sprite):
         
         self.screen_rect = screen.get_rect()
         
-        self.rect.centerx = self.screen_rect.centerx
-        self.rect.centery = self.screen_rect.centery
+        self.rect.x = position[1] * wof_settings.element_width
+        self.rect.y = position[0] * wof_settings.element_height
         
-        self.centerx = float(self.rect.centerx)
-        self.centery = float(self.rect.centery)
+        self.x = float(self.rect.x)
+        self.y = float(self.rect.y)
         
         # Movement flags
         self.moving_right = False
@@ -51,9 +51,9 @@ class Hero(Sprite):
         
         if self.alive:
             if self.moving_right:
-                self.rect.centerx += self.wof_settings.hero_speed_factor
+                self.rect.x += self.wof_settings.hero_speed_factor
             if self.moving_left:
-                self.rect.centerx -= self.wof_settings.hero_speed_factor
+                self.rect.x -= self.wof_settings.hero_speed_factor
             
             # check if we hit the wall/block
             hero_hit_wall = pygame.sprite.spritecollide(self, walls, False,pygame.sprite.collide_mask)        
@@ -65,9 +65,9 @@ class Hero(Sprite):
 
 
             if self.moving_up:
-                self.rect.centery -= self.wof_settings.hero_speed_factor
+                self.rect.y -= self.wof_settings.hero_speed_factor
             if self.moving_down:
-                self.rect.centery += self.wof_settings.hero_speed_factor
+                self.rect.y += self.wof_settings.hero_speed_factor
             
             # check if we hit the wall/block
             hero_hit_wall = pygame.sprite.spritecollide(self, walls, False,pygame.sprite.collide_mask)        
@@ -79,8 +79,8 @@ class Hero(Sprite):
 
         else:
             # if killed then fly away
-            self.rect.centerx += self.flyawayx*3
-            self.rect.centery += self.flyawayy*3
+            self.rect.x += self.flyawayx*3
+            self.rect.y += self.flyawayy*3
             self.image = pygame.transform.rotate(self.image,90)
                 
     def blitme(self):

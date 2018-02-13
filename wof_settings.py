@@ -36,10 +36,10 @@ class GameSettings(object):
         self.element_height = 32
         
         # Hero settings
-        self.hero_speed_factor = 2.5
+        self.hero_speed_factor = 3.
         
         # Death settings
-        self.death_speed_factor = 2
+        self.death_speed_factor = 2.
 
         
         # Bomb settings

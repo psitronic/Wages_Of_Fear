@@ -11,7 +11,7 @@
 #dd#pd#ddddd#pd#dpd#
 #dd#dd#ddddd#dd#ddd#
 #dd#dd#dd#dd####ddd#
-#pddidddd#dpddddddd#
+#pddidddd#dpddddddh#
 ####################
 ####################
 ##dddddddddddddddd##
@@ -26,5 +26,5 @@
 #ddd#dd.....ddd#...#
 #dd#dddd####dddd#dd#
 #d#dp..........pd#d#
-##d..............d##
+##d..............dh#
 ####################

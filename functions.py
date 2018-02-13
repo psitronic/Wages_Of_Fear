@@ -50,6 +50,15 @@ def check_events(wof_settings, screen, hero, bombs):
         if event.type == pygame.QUIT or (event.type == pygame.KEYUP and event.key == pygame.K_ESCAPE):
             wof_settings.running = False    
             terminate()
+#        elif (event.type == pygame.KEYUP and event.key == pygame.K_b):
+#            wof_settings.running = False
+#            return 'back'
+#        elif (event.type == pygame.KEYUP and event.key == pygame.K_n):
+#            wof_settings.running = False
+#            return 'next'
+#        elif (event.type == pygame.KEYUP and event.key == pygame.K_BACKSPACE):
+#            wof_settings.running = False
+#            return 'replay'
         elif event.type == pygame.KEYDOWN:
             check_keydown_events(event, wof_settings, screen, hero, bombs)
             # control the Hero movements
@@ -204,6 +213,8 @@ def read_levels(wof_settings):
                 level_map['inkblot'].append((lineNumShifted,symbolNum))
             if line[symbolNum] == "p":
                 level_map['death'].append((lineNumShifted,symbolNum))
+            if line[symbolNum] == "h":
+                level_map['hero'] = (lineNumShifted,symbolNum)
                 
         if lineNumShifted == (total_num_lines - 1) and lineNum !=0:
             levelNum += 1
@@ -300,7 +311,7 @@ def start_screen(screen,wof_settings):
             'Backspace to reset level, Esc to quit.',
             'N for next level, B to go back a level.',
             '',
-            'Press any key to start the game.']
+            'Press any key to start the game or Esc to quit.']
     
     # Start with drawing a blank color to the entire window:
     screen.fill(wof_settings.titleScreenBgColor)
@@ -330,6 +341,53 @@ def start_screen(screen,wof_settings):
             
             # Display the contents to the actual screen.
             pygame.display.update()
+            
+def level_screen(screen,wof_settings, current_level):
+    """
+    Display the level screen
+    """
+    
+    # Position the title image
+    title_rect = pygame.image.load('images/bitcoin.bmp').get_rect()
+    top_coord = 50
+    title_rect.top = top_coord
+    title_rect.centerx = wof_settings.width/2
+    top_coord += title_rect.height
+    
+    level_text = 'Level %i' % (current_level + 1)
+    text = [level_text,
+            '',
+            'Press any key to play or Esc to quit.']
+    
+    # Start with drawing a blank color to the entire window:
+    screen.fill(wof_settings.titleScreenBgColor)
+    
+    # Title image
+    screen.blit(pygame.image.load('images/bitcoin.bmp'), title_rect)
+    
+    # Position and draw the text
+    for i in range(len(text)):
+        title_font = pygame.font.Font('fonts/Future TimeSplitters.otf', 26)
+        text_surf = title_font.render(text[i], 1, wof_settings.titleTextColor)
+        text_rect = text_surf.get_rect()
+        top_coord += 10
+        text_rect.top = top_coord
+        text_rect.centerx = wof_settings.width/2
+        top_coord += text_rect.height
+        screen.blit(text_surf, text_rect)
+        
+    while True:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                terminate()
+            elif event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_ESCAPE:
+                    terminate()
+                return # user has pressed a key, so return.
+            
+            # Display the contents to the actual screen.
+            pygame.display.flip()         
+            
             
 def terminate():
     pygame.quit()

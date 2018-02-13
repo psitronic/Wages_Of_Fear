@@ -16,6 +16,9 @@ def run_level(levels,current_level,wof_settings,screen):
     # select the current level map
     levelMap = levels[current_level]
     
+    # the level status
+    status = None
+    
     # load sounds for events
     sound_diamond = pygame.mixer.Sound(wof_settings.sound_diamond)
     sound_bomb = pygame.mixer.Sound(wof_settings.sound_bomb)
@@ -27,7 +30,7 @@ def run_level(levels,current_level,wof_settings,screen):
 
     # create groups and objects
     walls = Group()  # Make a group to store walls
-    hero = Hero(wof_settings,screen) # create the hero
+    hero = Hero(wof_settings,screen,levelMap['hero']) # create the hero
     bombs = Group() # Make a group to store bombs in
     diamonds = Group() # Make a group to store all diamonds in
     explosions = Group() # Make a group to store all explosions in
@@ -45,7 +48,7 @@ def run_level(levels,current_level,wof_settings,screen):
 
     while wof_settings.running:
         # here is the game logic
-        fns.check_events(wof_settings,screen,hero,bombs) # check if keys pressed or released        
+        status = fns.check_events(wof_settings,screen,hero,bombs) # check if keys pressed or released        
         hero.update(walls) # update Hero position and state
         fns.update_inkblots(inkblots,walls,diamonds,hero,levelMap,sound_blot)
         fns.update_deaths(hero,deaths,walls,inkblots,diamonds)
@@ -54,6 +57,11 @@ def run_level(levels,current_level,wof_settings,screen):
         fns.update_explosions(explosions,inkblots,hero,deaths)
         
         fns.update_screen(wof_settings, screen, walls,hero, diamonds,bombs,explosions,inkblots,deaths)
+        
+        if not hero.alive:
+            status = 'replay'
+            wof_settings.running = False
+            pygame.mixer.music.stop()
 
     return status
 
@@ -73,13 +81,14 @@ def run_game():
     current_level = 0
     
     while True:
-        #fns.level_screen(screen,wof_settings)        
+        fns.level_screen(screen,wof_settings,current_level)
+        wof_settings.running = True        
         status = run_level(levels,current_level,wof_settings,screen)
         
-        if status in ('done','next'):
+        if status in ('done'):
             current_level += 1
             if current_level >= len(levels):
-                cureent_level = 0
+                current_level = 0
         elif status == 'back':
             current_level -= 1
             if current_level < 0:
