@@ -3,6 +3,7 @@
 # The game inspired by 'Jeux et casse-tête à programmer' (Jacques Arsac, 1985)
 # Bitmap images http://pixabay.com/
 # WAV sounds/music https://freesound.org/ (Attribution 3.0 Unported)
+# Future TimeSplitters font is licensed under the 1001Fonts Free For Commercial Use License (FFC)
 # Released under a "Simplified BSD" license
 
 import pygame
@@ -34,18 +35,12 @@ class Death(Sprite):
         self.centerx = float(self.rect.centerx)
         self.centery = float(self.rect.centery)
 
-        # Movement flags
-        self.moving_right = False
-        self.moving_left = False
-        self.moving_up = False
-        self.moving_down = False
-        self.hitWall = False
- 
+        # Movement step 
         self.deltaX = 1
         self.deltaY = 1
 
         
-    def update(self, walls,inkblots):
+    def update(self, walls,inkblots,diamonds):
         """
         Update the death position
         """
@@ -55,7 +50,7 @@ class Death(Sprite):
         self.rect.centerx += self.deltaX * self.wof_settings.death_speed_factor
         self.rect.centery += self.deltaY * self.wof_settings.death_speed_factor
         
-        if not pygame.sprite.spritecollide(self, walls, False,pygame.sprite.collide_mask) and not pygame.sprite.spritecollide(self, inkblots, False):
+        if not pygame.sprite.spritecollide(self, walls, False,pygame.sprite.collide_mask) and not pygame.sprite.spritecollide(self, inkblots, False) and not pygame.sprite.spritecollide(self, diamonds, False):
             old_x = self.rect.centerx
             old_y = self.rect.centery
         else:

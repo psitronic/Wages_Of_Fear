@@ -3,6 +3,7 @@
 # The game inspired by 'Jeux et casse-tête à programmer' (Jacques Arsac, 1985)
 # Bitmap images http://pixabay.com/
 # WAV sounds/music https://freesound.org/ (Attribution 3.0 Unported)
+# Future TimeSplitters font is licensed under the 1001Fonts Free For Commercial Use License (FFC)
 # Released under a "Simplified BSD" license
 
 import sys
@@ -13,7 +14,7 @@ from diamond import Diamond
 from wall import Wall
 from death import Death
 from inkblot import Inkblot
-from random import randint, randrange
+from random import randint
 
 def check_keydown_events(event, wof_settings, screen, hero, bombs):
     """Respond to key presses"""
@@ -48,8 +49,7 @@ def check_events(wof_settings, screen, hero, bombs):
 
         if event.type == pygame.QUIT or (event.type == pygame.KEYUP and event.key == pygame.K_ESCAPE):
             wof_settings.running = False    
-            pygame.quit()
-            sys.exit(0)
+            terminate()
         elif event.type == pygame.KEYDOWN:
             check_keydown_events(event, wof_settings, screen, hero, bombs)
             # control the Hero movements
@@ -125,14 +125,13 @@ def destroy(explosions,inkblots,hero,deaths):
     if explosion_hits_hero != None:
         hero.alive = False
             
-def create_diamonds(screen,diamonds,levelMap):
+def create_diamonds(wof_settings,screen,diamonds,levelMap):
     """
     Create a set of diamonds
     """
-    
-    diamond = Diamond(screen)        
-    diamond_width = diamond.rect.width
-    diamond_height = diamond.rect.height  
+       
+    diamond_width = wof_settings.element_width
+    diamond_height = wof_settings.element_height
     
     # Place the diamonds to the field
     for diamond_position in levelMap['diamond']:
@@ -152,15 +151,13 @@ def update_diamonds(hero,diamonds,sound_diamond):
             # Sound to play when the diamond picked up
             sound_diamond.play()
          
-def create_walls(screen,walls,levelMap):
+def create_walls(wof_settings,screen,walls,levelMap):
     """
-    Create walls and randomly distributed barriers 
+    Create walls
     """
-        
-    block = Wall(screen)
     
-    block_width = block.rect.width
-    block_height = block.rect.height        
+    block_width = wof_settings.element_width
+    block_height = wof_settings.element_height       
     
     # Create the top and bottom walls
     for block_position in levelMap['wall']:
@@ -173,52 +170,70 @@ def create_walls(screen,walls,levelMap):
         
 
 
-def readLevelsFile(filename):
-    mf = open(filename, 'r')
+def read_levels(wof_settings):
+    
+    mf = open(wof_settings.levels_file, 'r')
+    
     # Each level must end with a blank line
     content = mf.readlines() + ['\r\n']
     mf.close()
+    
+    #create a dictionary containing corrdinates of various elements
     level_map = {'wall':[],
-                 'diamond':[]}
+                 'diamond':[],
+                 'inkblot':[],
+                 'death':[],
+                 'hero':(),
+                 'exit':()}
+    
+    levels = []
+    levelNum = 0
+    
     for lineNum in range(len(content)):
         # Process each line that was in the level file.
+        total_num_lines = wof_settings.height/wof_settings.element_height
         line = content[lineNum].rstrip('\r\n')
-        
+        lineNumShifted = lineNum -  total_num_lines* levelNum
+
         for symbolNum in range(len(line)):
             if line[symbolNum] == "#":
-                level_map['wall'].append((lineNum,symbolNum))
+                level_map['wall'].append((lineNumShifted,symbolNum))
             if line[symbolNum] == "d":
-                level_map['diamond'].append((lineNum,symbolNum))
-
+                level_map['diamond'].append((lineNumShifted,symbolNum))
+            if line[symbolNum] == "i":
+                level_map['inkblot'].append((lineNumShifted,symbolNum))
+            if line[symbolNum] == "p":
+                level_map['death'].append((lineNumShifted,symbolNum))
                 
-    return level_map
-
-def create_inkblots(screen,inkblots,walls,diamonds,hero):
-    
-    maxInkblots = randint(4,7)
-    total = 0 
-    
-    while total < maxInkblots:
-        total += 1
-        created = False
-        while not created:
-    
-            inkblot = Inkblot(screen)
-            inkblot.x = randint(1, 20) * 32
-            inkblot.y = randint(1, 15) * 32
-            inkblot.rect.x = inkblot.x
-            inkblot.rect.y = inkblot.y
+        if lineNumShifted == (total_num_lines - 1) and lineNum !=0:
+            levelNum += 1
+            levels.append(level_map)
+            level_map = {'wall':[],
+                         'diamond':[],
+                         'inkblot':[],
+                         'death':[],
+                         'hero':(),
+                         'exit':()}
             
-            # check if the position is occupied
-            inkblot_hit_diamond = pygame.sprite.spritecollideany(inkblot, diamonds)
-            inkblot_hit_walls = pygame.sprite.spritecollideany(inkblot, walls)
-        
-            if inkblot_hit_diamond == None and inkblot_hit_walls == None:
-                inkblots.add(inkblot)
-                created = True
-            else:
-                inkblot.kill()
-                created = False
+
+    return levels
+
+def create_inkblots(wof_settings,screen,inkblots,levelMap):
+    """
+    Create a set of spatters
+    """
+    
+    inkblot_width = wof_settings.element_width
+    inkblot_height = wof_settings.element_height        
+    
+    # Create inkblots
+    for inkblot_position in levelMap['inkblot']:
+        inkblot = Inkblot(screen)
+        inkblot.x = inkblot_position[1] * inkblot_width
+        inkblot.y = inkblot_position[0] * inkblot_height
+        inkblot.rect.x = inkblot.x
+        inkblot.rect.y = inkblot.y
+        inkblots.add(inkblot)
 
 def update_inkblots(inkblots,walls,diamonds,hero,levelMap,sound_blot):
     """
@@ -241,41 +256,81 @@ def update_inkblots(inkblots,walls,diamonds,hero,levelMap,sound_blot):
         sound_blot.play()
         hero.alive = False
 
-def create_deaths(wof_settings,screen,deaths,walls,inkblots,levelMap):
+def create_deaths(wof_settings,screen,deaths,levelMap):
+    """
+    Create a set of deaths
+    """
+    
+    death_width = wof_settings.element_width
+    death_height = wof_settings.element_height        
+    
+    # Create deaths
+    for death_position in levelMap['death']:
+        death = Death(wof_settings,screen)
+        death.x = death_position[1] * death_width
+        death.y = death_position[0] * death_height
+        death.rect.x = death.x
+        death.rect.y = death.y
+        deaths.add(death)
 
     
-    maxDeaths = randint(10,15)
-    total = 0 
-    
-    while total < maxDeaths:
-        total += 1
-        created = False
-        while not created:
-    
-            death = Death(wof_settings,screen)
-            death.x = randint(1, 20) * 32
-            death.y = randint(1, 15) * 32
-            death.rect.x = float(death.x)
-            death.rect.y = float(death.y)
-            
-            # check if the position is occupied
-            death_hit_walls = pygame.sprite.spritecollideany(death, walls)
-            death_hit_inkblots = pygame.sprite.spritecollideany(death, inkblots)
-        
-            if death_hit_walls == None and death_hit_inkblots == None:
-                deaths.add(death)
-                created = True
-            else:
-                death.kill()
-                created = False
-            
-    deaths.update(walls,inkblots)
-    
-def update_deaths(hero,deaths,walls,inkblots):
-    deaths.update(walls,inkblots)
+def update_deaths(hero,deaths,walls,inkblots,diamonds):
+    deaths.update(walls,inkblots,diamonds)
     
     death_hits_hero = pygame.sprite.spritecollide(hero,deaths,True,pygame.sprite.collide_mask) 
     
     if death_hits_hero:
-        #sound_blot.play()
         hero.alive = False
+
+def start_screen(screen,wof_settings):
+    """
+    Display the start screen
+    """
+    
+    # Position the title image
+    title_rect = pygame.image.load('images/bitcoin.bmp').get_rect()
+    top_coord = 50
+    title_rect.top = top_coord
+    title_rect.centerx = wof_settings.width/2
+    top_coord += title_rect.height
+    
+    text = ['Collect bitcoins and kill monsters.',
+            '',
+            'Arrow or WASD keys to move, Space to throw a bomb.',
+            'Backspace to reset level, Esc to quit.',
+            'N for next level, B to go back a level.',
+            '',
+            'Press any key to start the game.']
+    
+    # Start with drawing a blank color to the entire window:
+    screen.fill(wof_settings.titleScreenBgColor)
+    
+    # Title image
+    screen.blit(pygame.image.load('images/bitcoin.bmp'), title_rect)
+    
+    # Position and draw the text
+    for i in range(len(text)):
+        title_font = pygame.font.Font('fonts/Future TimeSplitters.otf', 26)
+        text_surf = title_font.render(text[i], 1, wof_settings.titleTextColor)
+        text_rect = text_surf.get_rect()
+        top_coord += 10
+        text_rect.top = top_coord
+        text_rect.centerx = wof_settings.width/2
+        top_coord += text_rect.height
+        screen.blit(text_surf, text_rect)
+        
+    while True:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                terminate()
+            elif event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_ESCAPE:
+                    terminate()
+                return # user has pressed a key, so return.
+            
+            # Display the contents to the actual screen.
+            pygame.display.update()
+            
+def terminate():
+    pygame.quit()
+    sys.exit(0)

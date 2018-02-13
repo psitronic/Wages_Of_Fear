@@ -3,6 +3,7 @@
 # The game inspired by 'Jeux et casse-tête à programmer' (Jacques Arsac, 1985)
 # Bitmap images http://pixabay.com/
 # WAV sounds/music https://freesound.org/ (Attribution 3.0 Unported)
+# Future TimeSplitters font is licensed under the 1001Fonts Free For Commercial Use License (FFC)
 # Released under a "Simplified BSD" license
 
 import pygame

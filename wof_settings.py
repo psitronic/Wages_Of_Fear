@@ -3,6 +3,7 @@
 # The game inspired by 'Jeux et casse-tête à programmer' (Jacques Arsac, 1985)
 # Bitmap images http://pixabay.com/
 # WAV sounds/music https://freesound.org/ (Attribution 3.0 Unported)
+# Future TimeSplitters font is licensed under the 1001Fonts Free For Commercial Use License (FFC)
 # Released under a "Simplified BSD" license
 
 class GameSettings(object):
@@ -18,12 +19,27 @@ class GameSettings(object):
         self.width = 640
         self.height = 480
         self.bg_color = (230,230,230)
+        self.titleScreenBgColor = (176,196,222)
+        self.titleTextColor = (0,0,0)
+        
+        # game title
+        self.caption = "The Wages of Fear"
+        
+        # sounds and music
+        self.sound_diamond = 'sounds/coin.wav'
+        self.sound_bomb = 'sounds/explosion.wav'
+        self.sound_blot = 'sounds/splash.wav'
+        self.bckg_music = 'sounds/background-music.mp3'
+        
+        # Elements width and height
+        self.element_width = 32
+        self.element_height = 32
         
         # Hero settings
-        self.hero_speed_factor = 2
+        self.hero_speed_factor = 2.5
         
         # Death settings
-        self.death_speed_factor = 1
+        self.death_speed_factor = 2
 
         
         # Bomb settings
