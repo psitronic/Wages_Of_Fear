@@ -9,10 +9,11 @@
 import pygame
 from pygame.sprite import Group
 from wof_settings import GameSettings
+from stats import GameStats
 from hero import Hero
 import functions as fns
     
-def run_level(levels,current_level,wof_settings,screen):    
+def run_level(levels,current_level,wof_settings,screen,stats):    
     # select the current level map
     levelMap = levels[current_level]
     
@@ -20,9 +21,9 @@ def run_level(levels,current_level,wof_settings,screen):
     status = None
     
     # load sounds for events
-    sound_diamond = pygame.mixer.Sound(wof_settings.sound_diamond)
-    sound_bomb = pygame.mixer.Sound(wof_settings.sound_bomb)
-    sound_blot = pygame.mixer.Sound(wof_settings.sound_blot)
+    sound_diamond = pygame.mixer.Sound(wof_settings.sounds['diamond'])
+    sound_bomb = pygame.mixer.Sound(wof_settings.sounds['bomb'])
+    sound_blot = pygame.mixer.Sound(wof_settings.sounds['blot'])
 
     # start and play background music - infinit loop
     pygame.mixer.music.load(wof_settings.bckg_music)
@@ -50,11 +51,11 @@ def run_level(levels,current_level,wof_settings,screen):
         # here is the game logic
         fns.check_events(wof_settings,screen,hero,bombs) # check if keys pressed or released        
         hero.update(walls) # update Hero position and state
-        fns.update_inkblots(inkblots,walls,diamonds,hero,levelMap,sound_blot)
-        fns.update_deaths(hero,deaths,walls,inkblots,diamonds)
-        fns.update_diamonds(hero,diamonds,sound_diamond)
-        fns.update_bombs(wof_settings,screen,bombs,explosions,sound_bomb)
-        fns.update_explosions(explosions,inkblots,hero,deaths)
+        fns.update_inkblots(inkblots,walls,diamonds,hero,levelMap,sound_blot,stats)
+        fns.update_deaths(hero,deaths,walls,inkblots,diamonds,stats)
+        fns.update_diamonds(hero,diamonds,sound_diamond,stats)
+        fns.update_bombs(wof_settings,screen,bombs,explosions,sound_bomb,stats)
+        fns.update_explosions(explosions,inkblots,hero,deaths,stats)
         
         fns.update_screen(wof_settings, screen, walls,hero, diamonds,bombs,explosions,inkblots,deaths)
         
@@ -72,6 +73,8 @@ def run_game():
     screen = pygame.display.set_mode((wof_settings.width, wof_settings.height))
     pygame.display.set_caption(wof_settings.caption)
     
+    stats = GameStats()
+    
     fns.start_screen(screen,wof_settings) # show the title screen
     
     # read the level map from the text file
@@ -83,7 +86,7 @@ def run_game():
     while True:
         fns.level_screen(screen,wof_settings,current_level)
         wof_settings.running = True        
-        status = run_level(levels,current_level,wof_settings,screen)
+        status = run_level(levels,current_level,wof_settings,screen,stats)
         
         if status in ('done'):
             current_level += 1

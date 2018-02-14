@@ -95,7 +95,7 @@ def put_bomb(wof_settings,screen,hero,bombs):
         new_bomb = Bomb(wof_settings, screen, hero)
         bombs.add(new_bomb)
         
-def update_bombs(wof_settings,screen,bombs,explosions,sound_bomb):
+def update_bombs(wof_settings,screen,bombs,explosions,sound_bomb,stats):
     """
     Update animations of bombs and get rid of old bombs
     """
@@ -109,7 +109,7 @@ def update_bombs(wof_settings,screen,bombs,explosions,sound_bomb):
             bombs.remove(bomb)
             explosions.add(new_explosion)
             
-def update_explosions(explosions,diamonds,hero,deaths):
+def update_explosions(explosions,diamonds,hero,deaths,stats):
     """
     Update animations of exposions
     """
@@ -120,10 +120,10 @@ def update_explosions(explosions,diamonds,hero,deaths):
         if explosion.done == True:
             explosion.counter = 0
             explosion.done = False # Check if there is an explosion "process" finished
-            destroy(explosions,diamonds,hero,deaths) # If the explosion hits an object, then remove it
+            destroy(explosions,diamonds,hero,deaths,stats) # If the explosion hits an object, then remove it
             explosions.remove(explosion)
 
-def destroy(explosions,inkblots,hero,deaths):
+def destroy(explosions,inkblots,hero,deaths,stats):
     """
     Destroy objects if the explosion hits them
     """
@@ -131,6 +131,10 @@ def destroy(explosions,inkblots,hero,deaths):
     explosion_hits_hero = pygame.sprite.spritecollideany(hero,explosions,pygame.sprite.collide_mask)
     explosion_hits_death = pygame.sprite.groupcollide(explosions,deaths,False,True,pygame.sprite.collide_mask)
     
+    if explosion_hits_inkblot:
+        stats.inkblot_killed()
+    if explosion_hits_death:
+        stats.death_killed()
     if explosion_hits_hero != None:
         hero.alive = False
             
@@ -151,7 +155,7 @@ def create_diamonds(wof_settings,screen,diamonds,levelMap):
         diamond.rect.y = diamond.y
         diamonds.add(diamond)            
 
-def update_diamonds(hero,diamonds,sound_diamond):
+def update_diamonds(hero,diamonds,sound_diamond,stats):
     # Check for hero has hit any bullets
     # If so, get rid of the diamond
     
@@ -159,6 +163,7 @@ def update_diamonds(hero,diamonds,sound_diamond):
         if pygame.sprite.spritecollide(hero, diamonds, True, pygame.sprite.collide_mask):
             # Sound to play when the diamond picked up
             sound_diamond.play()
+            stats.diamond_collected()
          
 def create_walls(wof_settings,screen,walls,levelMap):
     """
@@ -249,7 +254,7 @@ def create_inkblots(wof_settings,screen,inkblots,levelMap):
         inkblot.rect.y = inkblot.y
         inkblots.add(inkblot)
 
-def update_inkblots(inkblots,walls,diamonds,hero,levelMap,sound_blot):
+def update_inkblots(inkblots,walls,diamonds,hero,levelMap,sound_blot,stats):
     """
     Update animations of inkblots and change their positions
     """
@@ -288,7 +293,7 @@ def create_deaths(wof_settings,screen,deaths,levelMap):
         deaths.add(death)
 
     
-def update_deaths(hero,deaths,walls,inkblots,diamonds):
+def update_deaths(hero,deaths,walls,inkblots,diamonds,stats):
     deaths.update(walls,inkblots,diamonds)
     
     death_hits_hero = pygame.sprite.spritecollide(hero,deaths,True,pygame.sprite.collide_mask) 

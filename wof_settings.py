@@ -26,9 +26,10 @@ class GameSettings(object):
         self.caption = "The Wages of Fear"
         
         # sounds and music
-        self.sound_diamond = 'sounds/coin.wav'
-        self.sound_bomb = 'sounds/explosion.wav'
-        self.sound_blot = 'sounds/splash.wav'
+        self.sounds = {'diamond': 'sounds/coin.wav',
+                       'bomb' : 'sounds/explosion.wav',
+                       'blot' : 'sounds/splash.wav'}
+        
         self.bckg_music = 'sounds/background-music.mp3'
         
         # Elements width and height
