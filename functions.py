@@ -215,6 +215,9 @@ def read_levels(wof_settings):
                 level_map['death'].append((lineNumShifted,symbolNum))
             if line[symbolNum] == "h":
                 level_map['hero'] = (lineNumShifted,symbolNum)
+            if line[symbolNum] == "e":
+                level_map['exit'] = (lineNumShifted,symbolNum)
+            
                 
         if lineNumShifted == (total_num_lines - 1) and lineNum !=0:
             levelNum += 1
@@ -295,16 +298,8 @@ def update_deaths(hero,deaths,walls,inkblots,diamonds):
 
 def start_screen(screen,wof_settings):
     """
-    Display the start screen
+    Display the instructions screen
     """
-    
-    # Position the title image
-    title_rect = pygame.image.load('images/bitcoin.bmp').get_rect()
-    top_coord = 50
-    title_rect.top = top_coord
-    title_rect.centerx = wof_settings.width/2
-    top_coord += title_rect.height
-    
     text = ['Collect bitcoins and kill monsters.',
             '',
             'Arrow or WASD keys to move, Space to throw a bomb.',
@@ -313,61 +308,49 @@ def start_screen(screen,wof_settings):
             '',
             'Press any key to start the game or Esc to quit.']
     
-    # Start with drawing a blank color to the entire window:
-    screen.fill(wof_settings.titleScreenBgColor)
+    title_image = 'images/bitcoin.bmp'
     
-    # Title image
-    screen.blit(pygame.image.load('images/bitcoin.bmp'), title_rect)
-    
-    # Position and draw the text
-    for i in range(len(text)):
-        title_font = pygame.font.Font('fonts/Future TimeSplitters.otf', 26)
-        text_surf = title_font.render(text[i], 1, wof_settings.titleTextColor)
-        text_rect = text_surf.get_rect()
-        top_coord += 10
-        text_rect.top = top_coord
-        text_rect.centerx = wof_settings.width/2
-        top_coord += text_rect.height
-        screen.blit(text_surf, text_rect)
-        
-    while True:
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                terminate()
-            elif event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_ESCAPE:
-                    terminate()
-                return # user has pressed a key, so return.
-            
-            # Display the contents to the actual screen.
-            pygame.display.update()
+    text_font = 'fonts/Future TimeSplitters.otf'
+    text_font_size = 26
+    displayTextToScreen(wof_settings,screen,title_image,text,text_font,text_font_size)
             
 def level_screen(screen,wof_settings, current_level):
     """
     Display the level screen
     """
     
-    # Position the title image
-    title_rect = pygame.image.load('images/bitcoin.bmp').get_rect()
-    top_coord = 50
-    title_rect.top = top_coord
-    title_rect.centerx = wof_settings.width/2
-    top_coord += title_rect.height
-    
+    title_image = 'images/bitcoin.bmp'
     level_text = 'Level %i' % (current_level + 1)
     text = [level_text,
             '',
             'Press any key to play or Esc to quit.']
     
+    text_font = 'fonts/Future TimeSplitters.otf'
+    text_font_size = 26
+    
+    displayTextToScreen(wof_settings,screen,title_image,text,text_font,text_font_size)
+
+def displayTextToScreen(wof_settings,screen,title_image,text,text_font,text_font_size):            
+    """
+    Display the level screen
+    """
+    
+    # Position the title image
+    title_rect = pygame.image.load(title_image).get_rect()
+    top_coord = 50
+    title_rect.top = top_coord
+    title_rect.centerx = wof_settings.width/2
+    top_coord += title_rect.height
+    
     # Start with drawing a blank color to the entire window:
     screen.fill(wof_settings.titleScreenBgColor)
     
     # Title image
-    screen.blit(pygame.image.load('images/bitcoin.bmp'), title_rect)
+    screen.blit(pygame.image.load(title_image), title_rect)
     
     # Position and draw the text
     for i in range(len(text)):
-        title_font = pygame.font.Font('fonts/Future TimeSplitters.otf', 26)
+        title_font = pygame.font.Font(text_font, text_font_size)
         text_surf = title_font.render(text[i], 1, wof_settings.titleTextColor)
         text_rect = text_surf.get_rect()
         top_coord += 10
@@ -387,7 +370,6 @@ def level_screen(screen,wof_settings, current_level):
             
             # Display the contents to the actual screen.
             pygame.display.flip()         
-            
             
 def terminate():
     pygame.quit()

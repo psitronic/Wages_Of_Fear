@@ -48,7 +48,7 @@ def run_level(levels,current_level,wof_settings,screen):
 
     while wof_settings.running:
         # here is the game logic
-        status = fns.check_events(wof_settings,screen,hero,bombs) # check if keys pressed or released        
+        fns.check_events(wof_settings,screen,hero,bombs) # check if keys pressed or released        
         hero.update(walls) # update Hero position and state
         fns.update_inkblots(inkblots,walls,diamonds,hero,levelMap,sound_blot)
         fns.update_deaths(hero,deaths,walls,inkblots,diamonds)
