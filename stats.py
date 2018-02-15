@@ -39,7 +39,7 @@ class GameStats():
         """
         Count the number of killed inkblots
         """
-        self.inkblots_collected += 1
+        self.inkblots_killed += 1
         
     def death_killed(self):
         """

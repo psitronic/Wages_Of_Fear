@@ -15,6 +15,7 @@ from wall import Wall
 from death import Death
 from inkblot import Inkblot
 from random import randint
+from time import sleep
 
 def check_keydown_events(event, wof_settings, screen, hero, bombs):
     """Respond to key presses"""
@@ -50,15 +51,15 @@ def check_events(wof_settings, screen, hero, bombs):
         if event.type == pygame.QUIT or (event.type == pygame.KEYUP and event.key == pygame.K_ESCAPE):
             wof_settings.running = False    
             terminate()
-#        elif (event.type == pygame.KEYUP and event.key == pygame.K_b):
-#            wof_settings.running = False
-#            return 'back'
-#        elif (event.type == pygame.KEYUP and event.key == pygame.K_n):
-#            wof_settings.running = False
-#            return 'next'
-#        elif (event.type == pygame.KEYUP and event.key == pygame.K_BACKSPACE):
-#            wof_settings.running = False
-#            return 'replay'
+        elif (event.type == pygame.KEYUP and event.key == pygame.K_b):
+            wof_settings.running = False
+            return 'back'
+        elif (event.type == pygame.KEYUP and event.key == pygame.K_n):
+            wof_settings.running = False
+            return 'next'
+        elif (event.type == pygame.KEYUP and event.key == pygame.K_BACKSPACE):
+            wof_settings.running = False
+            return 'replay'
         elif event.type == pygame.KEYDOWN:
             check_keydown_events(event, wof_settings, screen, hero, bombs)
             # control the Hero movements
@@ -334,6 +335,7 @@ def level_screen(screen,wof_settings, current_level):
     text_font_size = 26
     
     displayTextToScreen(wof_settings,screen,title_image,text,text_font,text_font_size)
+    sleep(0.5)
 
 def displayTextToScreen(wof_settings,screen,title_image,text,text_font,text_font_size):            
     """
@@ -373,8 +375,8 @@ def displayTextToScreen(wof_settings,screen,title_image,text,text_font,text_font
                     terminate()
                 return # user has pressed a key, so return.
             
-            # Display the contents to the actual screen.
-            pygame.display.flip()         
+        # Display the contents to the actual screen.
+        pygame.display.flip()         
             
 def terminate():
     pygame.quit()

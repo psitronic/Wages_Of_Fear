@@ -16,7 +16,7 @@ import functions as fns
 def run_level(levels,current_level,wof_settings,screen,stats):    
     # select the current level map
     levelMap = levels[current_level]
-    
+
     # the level status
     status = None
     
@@ -49,7 +49,7 @@ def run_level(levels,current_level,wof_settings,screen,stats):
 
     while wof_settings.running:
         # here is the game logic
-        fns.check_events(wof_settings,screen,hero,bombs) # check if keys pressed or released        
+        status = fns.check_events(wof_settings,screen,hero,bombs) # check if keys pressed or released        
         hero.update(walls) # update Hero position and state
         fns.update_inkblots(inkblots,walls,diamonds,hero,levelMap,sound_blot,stats)
         fns.update_deaths(hero,deaths,walls,inkblots,diamonds,stats)
@@ -72,6 +72,8 @@ def run_game():
     wof_settings = GameSettings() # set the game settings
     screen = pygame.display.set_mode((wof_settings.width, wof_settings.height))
     pygame.display.set_caption(wof_settings.caption)
+    # hide mouse cursor
+    pygame.mouse.set_visible(False)
     
     stats = GameStats()
     
@@ -88,7 +90,7 @@ def run_game():
         wof_settings.running = True        
         status = run_level(levels,current_level,wof_settings,screen,stats)
         
-        if status in ('done'):
+        if status in ('next','done'):
             current_level += 1
             if current_level >= len(levels):
                 current_level = 0
