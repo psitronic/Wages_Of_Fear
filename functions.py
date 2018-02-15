@@ -335,7 +335,7 @@ def level_screen(screen,wof_settings, current_level):
     text_font_size = 26
     
     displayTextToScreen(wof_settings,screen,title_image,text,text_font,text_font_size)
-    sleep(0.5)
+    sleep(1.)
 
 def displayTextToScreen(wof_settings,screen,title_image,text,text_font,text_font_size):            
     """
