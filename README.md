@@ -1,6 +1,5 @@
 # Wages_Of_Fear
 A simple Python arcade game - collect bitcoins and kill monsters
-By Andrey Sidorenko spintronic@tuta.io
 The game was inspired by 'Jeux et casse-tête à programmer' (Jacques Arsac, 1985)
 
 Bitmap images http://pixabay.com/
